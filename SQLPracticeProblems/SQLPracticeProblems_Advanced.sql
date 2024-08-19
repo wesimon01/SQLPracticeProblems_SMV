@@ -66,9 +66,11 @@ Order by od.OrderID
 --41
 select o.OrderId,
 o.OrderDate,
-o
+convert(date, o.RequiredDate, 31) as RequiredDate,
+convert(date, o.ShippedDate, 31) as ShippedDate
 from orders o
-
+where o.ShippedDate >= RequiredDate
+order by o.OrderID
 
 --42 
 select e.EmployeeID,
