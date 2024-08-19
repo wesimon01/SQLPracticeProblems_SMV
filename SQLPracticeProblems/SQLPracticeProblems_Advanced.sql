@@ -57,10 +57,27 @@ select od.OrderId
 From OrderDetails od
 Where od.Quantity >= 60
 group By od.OrderID, od.Quantity
-Having Count(*) > 1
+having count(*) > 1
 Order by od.OrderID
 
 --39
 --40
 
 --41
+select o.OrderId,
+o.OrderDate,
+o
+from orders o
+
+
+--42 
+select e.EmployeeID,
+e.LastName,
+TotalLateOrders = count(*)
+from employees e 
+join orders o on o.EmployeeID = e.EmployeeId
+where o.ShippedDate >= o.RequiredDate
+group by e.EmployeeId, e.LastName
+order by TotalLateOrders desc
+
+--43
