@@ -43,3 +43,31 @@ where '2012-04-15' between ch.StartDate and ch.EndDate
 order by ch.ProductID
 
 --6
+select ch.ProductID,
+ch.StandardCost
+from ProductCostHistory ch
+where '2014-04-15' between ch.StartDate and IsNull(ch.EndDate, getdate())
+order by ch.ProductID
+
+--7
+select format(StartDate, 'yyyy/MM') as ProductListPriceMonth,
+count(*) as TotalRows
+from ProductListPriceHistory ph 
+group by format(StartDate, 'yyyy/MM')
+
+--8
+--9
+select ph.ProductId,
+ph.ListPrice
+from ProductListPriceHistory ph
+where ph.EndDate is null 
+or ph.EndDate > getdate()
+
+--10
+select p.ProductId,
+p.ProductName
+from Product p
+left join ProductListPriceHistory ph on ph.ProductID = p.ProductID
+where ph.ListPrice is null
+
+ 
