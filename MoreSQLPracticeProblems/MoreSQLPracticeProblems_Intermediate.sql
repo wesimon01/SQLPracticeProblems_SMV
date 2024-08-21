@@ -69,5 +69,14 @@ p.ProductName
 from Product p
 left join ProductListPriceHistory ph on ph.ProductID = p.ProductID
 where ph.ListPrice is null
+order by p.ProductId
 
- 
+--11
+--12
+select ph.ProductId
+from ProductListPriceHistory ph 
+where Enddate is null or EndDate > getdate()
+group by ph.ProductID
+having count(*) > 1
+
+
