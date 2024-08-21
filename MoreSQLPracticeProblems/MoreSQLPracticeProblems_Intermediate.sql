@@ -75,8 +75,47 @@ order by p.ProductId
 --12
 select ph.ProductId
 from ProductListPriceHistory ph 
-where Enddate is null or EndDate > getdate()
+where Enddate is null 
+or EndDate > getdate()
 group by ph.ProductID
 having count(*) > 1
 
+--13
+select p.ProductID,
+p.ProductName,
+FirstOrder = convert(date, min(soh.OrderDate)),
+LastOrder = convert(date, max(soh.OrderDate))
+from product p
+left join ProductSubcategory sub on sub.ProductSubcategoryID = p.ProductSubcategoryID
+left join salesorderdetail sod on sod.ProductID = p.ProductID
+left join SalesOrderHeader soh on soh.SalesOrderID = sod.SalesOrderID
+group by p.ProductID, p.ProductName
+order by p.ProductName
 
+--14
+select p.ProductId,
+p.ProductName,
+p.ListPrice as Prod_ListPrice,
+ph.ListPrice as PriceHist_LastestListPrice,
+Diff = abs(p.ListPrice - ph.ListPrice)
+from product p 
+join ProductListPriceHistory ph on ph.ProductID = p.ProductID
+where (ph.EndDate is null or ph.EndDate > getdate())
+and ph.ListPrice <> p.ListPrice
+and abs(p.ListPrice - ph.ListPrice) > 0
+order by p.ProductId
+
+--15
+select p.ProductId,
+OrderDate = convert(date, soh.Orderdate),
+p.ProductName,
+sod.OrderQty,
+SellStartDate = convert(date, p.SellStartDate),
+SellEndDate = convert(date, p.SellEndDate)
+from product p
+join salesorderdetail sod on sod.ProductID = p.ProductId
+join salesorderheader soh on soh.SalesOrderID = sod.SalesOrderID 
+where Orderdate not between SellStartDate and SellEndDate
+order by p.ProductId, soh.OrderDate
+
+--16
