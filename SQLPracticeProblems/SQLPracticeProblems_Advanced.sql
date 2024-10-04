@@ -54,13 +54,32 @@ order by NewId()
 
 --38
 select od.OrderId
+from OrderDetails od
+where od.Quantity >= 60
+group By od.OrderID, od.Quantity
+having count(*) > 1
+order by od.OrderID
+
+--39
+with PotentialDuplicates as 
+(
+select od.OrderId
 From OrderDetails od
 Where od.Quantity >= 60
 group By od.OrderID, od.Quantity
 having count(*) > 1
-Order by od.OrderID
+)
 
---39
+select 
+od.OrderID,
+od.ProductID,
+od.UnitPrice,
+od.Quantity,
+od.Discount
+from OrderDetails od
+where od.OrderId in (select OrderId from PotentialDuplicates)
+order by od.OrderId, od.Quantity
+
 --40
 
 --41
@@ -83,3 +102,24 @@ group by e.EmployeeId, e.LastName
 order by TotalLateOrders desc
 
 --43
+
+
+--55
+with CTE_FirstOrderForCountry as (
+select
+o.ShipCountry,
+o.CustomerID,
+o.OrderId,
+OrderDate = convert(date, o.orderdate),
+RowNumberPerCountry = ROW_NUMBER() over (partition by ShipCountry order by ShipCountry, OrderId)
+from orders o
+)
+
+select
+ShipCountry,
+CustomerId,
+OrderId, 
+OrderDate
+from CTE_FirstOrderForCountry
+where RowNumberPerCountry = 1
+order by ShipCountry

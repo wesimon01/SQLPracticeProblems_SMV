@@ -50,7 +50,8 @@ group by ShipCountry
 order by AverageFreight desc
 
 --26
-select top 3 o.ShipCountry,
+select top 3 
+o.ShipCountry,
 AverageFreight = avg(o.Freight)
 from orders o 
 where year(o.orderdate) = 2015
@@ -58,7 +59,22 @@ group by ShipCountry
 order by AverageFreight desc
 
 --27
+Select
+o.OrderID,
+o.OrderDate,
+o.ShipCountry
+From Orders o
+Where
+OrderDate between '20150101' and '20160101'
+
 --28
+select top 3 
+o.ShipCountry,
+AverageFreight = avg(o.Freight)
+from orders o 
+where Orderdate >= dateadd(yy, -1, (select Max(Orderdate) from Orders))
+group by ShipCountry
+order by AverageFreight desc
 
 --29
 select e.EmployeeID,
